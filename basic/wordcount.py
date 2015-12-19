@@ -41,6 +41,50 @@ import sys
 
 
 # +++your code here+++
+def build_word_pair(filename):
+    ''' Process file and returns a list of key and value pair '''
+    my_dict = {}
+    with open(filename, 'r') as fp:
+        data = ' '.join(fp.read().split())
+
+    data = data.split(' ')
+    for word in data:
+        word = word.lower()
+        prev_val = my_dict.get(word, 0)
+        my_dict[word] = prev_val + 1
+
+    word_pairs = list(my_dict.items())
+
+    return word_pairs
+
+def print_words(filename):
+    word_pairs = build_word_pair(filename)
+    word_pairs.sort()
+
+    print(word_pairs)
+
+    return True
+
+def print_top(filename):
+    word_pairs = build_word_pair(filename)
+
+    offset = 0
+    # Invert key, val pair order to val, key so it can be sorted
+    while offset < len(word_pairs):
+        key, val = word_pairs[offset]
+        word_pairs[offset] = [val, key]
+        offset += 1
+
+    word_pairs.sort()
+    word_pairs.reverse()
+    # print top 20 words
+    offset=1
+    for val, key in word_pairs[:20]:
+        print('{}: Word: {} - Repeats {} time(s)'.format(offset, key, val))
+        offset += 1
+
+    return True
+
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
 # and builds and returns a word/count dict for it.
