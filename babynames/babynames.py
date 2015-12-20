@@ -41,8 +41,43 @@ def extract_names(filename):
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    # +++your code here+++
-    return
+    name_list = []
+    # regex to capture the year in the text file
+    regex1 = 'name="year".*value="([0-9]+)">'
+    # regex to capture rank, male and female names
+    regex2 = '<td>([0-9]+)</td><td>([A-Za-z]+)</td><td>([A-Za-z]+)</td>'
+    # iterate over the given files
+    for file in filename:
+        baby_names = []
+        with open(file, 'r') as fp:
+            text = fp.read()
+
+            year = re.search(regex1, text)
+            year = year.group(1)
+            # In case year is found proceed otherwise the pattern may incorrect
+            # it's better to abort
+            if year:
+                baby_names.append(year)
+            else:
+                assert "Unable to find year on file - different pattern"
+            # Hunt for the names and append to the list
+            for line in text.splitlines():
+                name = re.search(regex2, line)
+                if name:
+                    rank = name.group(1)
+                    male_name = name.group(2)
+                    female_name = name.group(3)
+
+                    baby_names.append('{} {}'.format(male_name, rank))
+                    baby_names.append('{} {}'.format(female_name, rank))
+
+        fp.close()
+
+        baby_names.sort()
+
+        name_list.append(baby_names)
+
+    return name_list
 
 
 def main():
@@ -60,10 +95,9 @@ def main():
     if args[0] == '--summaryfile':
         summary = True
         del args[0]
-
-        # +++your code here+++
-        # For each filename, get the names, then either print the text output
-        # or write it to a summary file
+        # Print each one of the list returned by extract_names function
+        for name_list in extract_names(args):
+            print(name_list)
 
 
 if __name__ == '__main__':
